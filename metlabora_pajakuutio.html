@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Metlabora Pajakuutio — Oppimisen ja ammatillisen osaamisen toiminta-alusta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════
+   PAJAKUUTIO DESIGN TOKENS
+   Valoisa, pehmeä, skandinaavinen ja ihmisläheinen paletti
+══════════════════════════════════════════════════════════ */
+:root {
+  --c1: #A9D4C4; --i1: #255845; --d1: #183e30; /* 1. Yhteispeli (Minttu) */
+  --c2: #E8C4D0; --i2: #7A334E; --d2: #522134; /* 2. Oikeudet (Ruusu) */
+  --c3: #BCD5E3; --i3: #28546C; --d3: #1A394B; /* 3. RETAKE (Utu-sininen) */
+  --c4: #DBC8E2; --i4: #543768; --d4: #3A2548; /* 4. Turvallisuus (Laventeli) */
+  --c5: #F5C6B6; --i5: #85371E; --d5: #5E2513; /* 5. Talous (Terrakotta) */
+  --c6: #F4DBA8; --i6: #826219; --d6: #5A430F; /* 6. Laatu & Loki (Hiekka/Kulta) */
+
+  --paper: #FAF8F5;
+  --card-bg: #FFFFFF;
+  --cloud: #F2EFEA;
+  --mist: #E7E3DC;
+  --border: #DFDAD1;
+  --text: #23221D;
+  --subtext: #5D5A52;
+  --muted: #8E8B82;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 9999px;
+
+  --shadow-subtle: 0 4px 20px -4px rgba(35, 34, 29, 0.05);
+  --shadow-card: 0 12px 36px -10px rgba(35, 34, 29, 0.08), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  --shadow-float: 0 20px 48px -12px rgba(35, 34, 29, 0.12);
+
+  --active-c: var(--c1);
+  --active-i: var(--i1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--paper);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(1200px 500px at 50% -100px, color-mix(in srgb, var(--active-c) 30%, transparent), transparent 70%),
+    linear-gradient(to bottom, #FAF8F5, #F5F2EB);
+  transition: background-image 0.8s ease;
+}
+
+/* ════ YLÄTILA & BRÄNDIPÄÄTIE ════ */
+header.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 248, 245, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cube-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--c1), var(--c4));
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.brand-text h1 {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-text h1 span.tagline {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--subtext);
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.brand-text p {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-quote {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--subtext);
+  max-width: 420px;
+  text-align: right;
+  line-height: 1.35;
+  display: none;
+}
+@media (min-width: 900px) {
+  .header-quote { display: block; }
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--i1);
+}
+.status-pill .pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--i1);
+  animation: pulse 2s infinite ease-in-out;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ════ 6-PILARIN NAVIGOINTIPANEELI ════ */
+nav.pillar-nav {
+  background: rgba(250, 248, 245, 0.7);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav.pillar-nav::-webkit-scrollbar { display: none; }
+
+.nav-track {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-full);
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--subtext);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s cubic-bezier(0.34, 1.4, 0.4, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.nav-tab:hover {
+  transform: translateY(-1px);
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.nav-tab.active {
+  background: color-mix(in srgb, var(--tab-c) 30%, #FFFFFF);
+  border-color: var(--tab-i);
+  color: var(--tab-i);
+  box-shadow: 0 4px 14px -3px color-mix(in srgb, var(--tab-i) 35%, transparent);
+}
+
+.nav-tab .tab-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+/* ════ PÄÄALUE & HERO ════ */
+main.main-content {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+.hero-manifesto {
+  background: linear-gradient(145deg, #FFFFFF, var(--cloud));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 860px) {
+  .hero-manifesto {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+  }
+}
+
+.manifesto-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--active-i);
+  margin-bottom: 6px;
+}
+
+.manifesto-title {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.manifesto-title em {
+  font-style: italic;
+  color: var(--active-i);
+}
+
+.manifesto-text {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--subtext);
+  margin-bottom: 16px;
+}
+
+.quote-box {
+  background: rgba(255, 255, 255, 0.7);
+  border-left: 3px solid var(--active-i);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 14px;
+  font-family: var(--font-serif);
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--text);
+}
+
+/* 3D-interaktiivinen pajakuutio herossa */
+.hero-cube-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.cube-stage {
+  perspective: 700px;
+  width: 140px;
+  height: 140px;
+  margin: 10px 0;
+}
+
+.cube-3d {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-22deg) rotateY(32deg);
+  transition: transform 0.6s cubic-bezier(0.34, 1.4, 0.4, 1);
+  cursor: grab;
+}
+
+.cube-face {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  box-shadow: inset 0 0 30px rgba(255,255,255,0.6), 0 4px 16px rgba(0,0,0,0.06);
+  font-family: var(--font-sans);
+}
+.cube-face .cf-num { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; }
+.cube-face .cf-icon { font-size: 24px; margin: 4px 0; }
+.cube-face .cf-title { font-size: 12px; font-weight: 700; line-height: 1.15; }
+
+.face-1 { transform: rotateY(0deg) translateZ(70px); background: linear-gradient(135deg, #cde9de, var(--c1)); color: var(--i1); }
+.face-2 { transform: rotateY(90deg) translateZ(70px); background: linear-gradient(135deg, #f4dae2, var(--c2)); color: var(--i2); }
+.face-3 { transform: rotateY(180deg) translateZ(70px); background: linear-gradient(135deg, #d7e8f1, var(--c3)); color: var(--i3); }
+.face-4 { transform: rotateY(-90deg) translateZ(70px); background: linear-gradient(135deg, #ebdcf0, var(--c4)); color: var(--i4); }
+.face-5 { transform: rotateX(90deg) translateZ(70px); background: linear-gradient(135deg, #fadcd3, var(--c5)); color: var(--i5); }
+.face-6 { transform: rotateX(-90deg) translateZ(70px); background: linear-gradient(135deg, #fcebc7, var(--c6)); color: var(--i6); }
+
+.cube-shadow {
+  width: 120px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(35, 34, 29, 0.18), transparent);
+  filter: blur(4px);
+  margin-top: 6px;
+}
+.cube-hint {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+/* ════ PILARIEN NÄKYMÄT ════ */
+.pillar-view {
+  display: none;
+  animation: fadeIn 0.35s ease;
+}
+.pillar-view.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-head {
+  margin-bottom: 24px;
+}
+.section-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--active-i);
+  margin-bottom: 4px;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.section-desc {
+  font-size: 14.5px;
+  color: var(--subtext);
+  max-width: 780px;
+  line-height: 1.55;
+}
+
+/* KORTIT JA RUUDUKOT */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 900px) {
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.content-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  box-shadow: var(--shadow-subtle);
+  position: relative;
+  transition: all 0.25s ease;
+}
+.content-card:hover {
+  box-shadow: var(--shadow-card);
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.card-body {
+  font-size: 13.5px;
+  color: var(--subtext);
+  line-height: 1.55;
+}
+
+/* ════ PILARI 1: ROOLIKARTTA ════ */
+.role-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.role-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.role-card:hover, .role-card.selected {
+  border-color: var(--role-color, var(--i1));
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+.role-card.selected {
+  background: color-mix(in srgb, var(--role-color) 8%, #FFFFFF);
+}
+
+.role-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.role-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--role-color);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.role-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+.role-title {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.role-detail-box {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-top: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ════ PILARI 2: CHECKLIST ════ */
+.checklist-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-top: 16px;
+}
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--cloud);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--i2);
+  margin-top: 2px;
+  cursor: pointer;
+}
+.checklist-item.done span.text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* ════ PILARI 3: RETAKE LASKURI ════ */
+.retake-calc-box {
+  background: linear-gradient(135deg, #FFFFFF, color-mix(in srgb, var(--c3) 14%, #FFFFFF));
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  box-shadow: var(--shadow-card);
+}
+.retake-input-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 18px 0;
+}
+@media (min-width: 600px) {
+  .retake-input-row { grid-template-columns: 1fr 1fr; }
+}
+
+.retake-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+  text-align: center;
+}
+.stat-pill {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+}
+.stat-pill .val {
+  font-size: 22px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--i3);
+}
+.stat-pill .lbl {
+  font-size: 10.5px;
+  color: var(--subtext);
+  margin-top: 3px;
+}
+
+/* ════ PILARI 4: SIPULIMALLI & TASO 5 MITTASIMULAATTORI ════ */
+.onion-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.onion-layer {
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.layer-outer {
+  width: 100%;
+  max-width: 480px;
+  padding: 18px;
+  background: color-mix(in srgb, var(--c4) 20%, #FFFFFF);
+  border: 2px dashed var(--i4);
+}
+.layer-mid {
+  width: 100%;
+  max-width: 380px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--c1) 30%, #FFFFFF);
+  border: 2px solid var(--i1);
+}
+.layer-core {
+  width: 100%;
+  max-width: 270px;
+  padding: 16px 12px;
+  background: #FFFFFF;
+  border: 3px solid #C0392B;
+  box-shadow: 0 4px 16px rgba(192, 57, 43, 0.15);
+}
+
+/* Oikohöylän runkomittasimulaattori */
+.machine-sim-box {
+  background: #1C1B18;
+  color: #ECEAE4;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-top: 20px;
+}
+.machine-table-visual {
+  position: relative;
+  height: 90px;
+  background: #2A2823;
+  border: 2px solid #444038;
+  border-radius: var(--radius-sm);
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  overflow: hidden;
+}
+.blade-zone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  background: #E74C3C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.min-line-300 {
+  position: absolute;
+  left: 170px; /* visual 300mm mark */
+  top: 0;
+  bottom: 0;
+  border-left: 2px dashed #F39C12;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: #F39C12;
+  font-weight: 700;
+  z-index: 10;
+}
+.sim-workpiece {
+  height: 48px;
+  background: #8D5B4C;
+  border: 2px solid #D4A373;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #FFF;
+  transition: width 0.15s ease, background 0.15s ease;
+  z-index: 5;
+}
+
+/* ════ PILARI 5: AMMATTILAISEN TALOUSLASKURI ════ */
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 840px) {
+  .calc-grid { grid-template-columns: 1.2fr 1fr; }
+}
+
+.calc-form-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+}
+.calc-receipt-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-sans);
+}
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--cloud);
+  font-size: 13px;
+}
+.receipt-row.total {
+  border-top: 2px solid var(--text);
+  border-bottom: none;
+  font-size: 16px;
+  font-weight: 800;
+  padding-top: 12px;
+  margin-top: 6px;
+}
+
+/* ════ PILARI 6: LOKIKIRJA & TILANNEHUONE ════ */
+.log-dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 860px) {
+  .log-dashboard { grid-template-columns: 1.2fr 1fr; }
+}
+
+.log-table-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.log-table th {
+  background: var(--cloud);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--subtext);
+}
+.log-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--cloud);
+}
+.log-table tr:hover { background: rgba(0,0,0,0.015); }
+
+/* YLEISET KOMPONENTIT */
+.input-field {
+  margin-bottom: 14px;
+}
+.input-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--subtext);
+  margin-bottom: 5px;
+}
+.input-field input, .input-field select, .input-field textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #FFFFFF;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+.input-field input:focus, .input-field select:focus, .input-field textarea:focus {
+  outline: none;
+  border-color: var(--active-i);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s cubic-bezier(0.34, 1.4, 0.4, 1);
+  font-family: inherit;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--active-i);
+  color: #FFFFFF;
+  border-color: var(--active-i);
+  box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--active-i) 40%, transparent);
+}
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--active-i) 88%, #000);
+}
+
+.btn-secondary {
+  background: var(--card-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--muted);
+}
+
+/* FOOTER */
+footer.app-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+footer.app-footer a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* TOAST ILMOITUS */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #23221D;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: var(--shadow-float);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 100;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+  <!-- YLÄPALKKI -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="#" class="brand-wrap" onclick="switchPillar(1); return false;">
+        <div class="cube-icon-badge">🧊</div>
+        <div class="brand-text">
+          <h1>Metlabora Pajakuutio <span class="tagline">— Oppimisen ja osaamisen toiminta-alusta</span></h1>
+          <p>Metropolia AMK · Muotoilun pajat · Arabia-kampus</p>
+        </div>
+      </a>
+
+      <div class="header-quote">
+        ”Selkeät toimintamallit ja roolirajat vähentävät työn epämääräisyyttä ja turvaavat opetuksen pysyvät toimintaedellytykset rajallisilla resursseilla.”
+      </div>
+
+      <div class="header-actions">
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span>Pajatoiminnan Standardi</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 6-PILARIN NAVIGOINTI -->
+  <nav class="pillar-nav">
+    <div class="nav-track" id="pillarNav">
+      <button class="nav-tab active" data-pillar="1" style="--tab-c: var(--c1); --tab-i: var(--i1);" onclick="switchPillar(1)">
+        <span class="tab-num">1</span>
+        <span>Yhteistoiminta & Roolit</span>
+      </button>
+      <button class="nav-tab" data-pillar="2" style="--tab-c: var(--c2); --tab-i: var(--i2);" onclick="switchPillar(2)">
+        <span class="tab-num">2</span>
+        <span>Käyttöoikeudet & Vastuut</span>
+      </button>
+      <button class="nav-tab" data-pillar="3" style="--tab-c: var(--c3); --tab-i: var(--i3);" onclick="switchPillar(3)">
+        <span class="tab-num">3</span>
+        <span>RETAKE & Materiaalitalous</span>
+      </button>
+      <button class="nav-tab" data-pillar="4" style="--tab-c: var(--c4); --tab-i: var(--i4);" onclick="switchPillar(4)">
+        <span class="tab-num">4</span>
+        <span>Työturvallisuusjärjestelmä</span>
+      </button>
+      <button class="nav-tab" data-pillar="5" style="--tab-c: var(--c5); --tab-i: var(--i5);" onclick="switchPillar(5)">
+        <span class="tab-num">5</span>
+        <span>Ammatillinen Kustannusoppi</span>
+      </button>
+      <button class="nav-tab" data-pillar="6" style="--tab-c: var(--c6); --tab-i: var(--i6);" onclick="switchPillar(6)">
+        <span class="tab-num">6</span>
+        <span>Laadunseuranta & Loki</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- PÄÄSISÄLTÖ -->
+  <main class="main-content">
+
+    <!-- HERO JOHDANTO -->
+    <section class="hero-manifesto">
+      <div>
+        <div class="manifesto-kicker" id="heroKicker">Tahko 1 · Yhteinen toimintaympäristö & ammatillinen perusta</div>
+        <h2 class="manifesto-title" id="heroTitle">Opetuksen arjen pysyvät toimintaedellytykset <em>ja ammatillinen oppimisympäristö</em></h2>
+        <p class="manifesto-text" id="heroText">
+          Pajatilojen toiminta perustuu ennakoitavuuteen, turvallisuuteen ja asiantuntijalähtöiseen yhteistyöhön. 
+          Toimintamallien ja työnjaon systematisointi poistaa työn arjesta kuormittavaa epämääräisyyttä ja selkeyttää vastuualueita. 
+          Pajamestarien staattinen sidonnaisuus erikoistyötiloihin ja tilakohtaisiin turvallisuusresursseihin muodostaa paja-arjen 
+          kivijalan, jota lehtoreiden ennakoiva opetussuunnittelu ja esihenkilön resurssituki vahvistavat.
+        </p>
+        <div class="quote-box" id="heroQuote">
+          ”Yhteisesti sovitut reunaehdot ja kirjalliset vastuut suojaavat henkilöstöä kohtuuttomalta kuormitukselta ja takaavat opiskelijoille tasavertaiset oppimisedellytykset.”
+        </div>
+      </div>
+
+      <div class="hero-cube-wrap">
+        <div class="cube-stage">
+          <div class="cube-3d" id="interactiveCube" onclick="rotateCubeNext()">
+            <div class="cube-face face-1">
+              <span class="cf-num">Tahko 1</span>
+              <span class="cf-icon">🏢</span>
+              <span class="cf-title">Työnjako</span>
+            </div>
+            <div class="cube-face face-2">
+              <span class="cf-num">Tahko 2</span>
+              <span class="cf-icon">⚖️</span>
+              <span class="cf-title">Oikeudet</span>
+            </div>
+            <div class="cube-face face-3">
+              <span class="cf-num">Tahko 3</span>
+              <span class="cf-icon">🌱</span>
+              <span class="cf-title">RETAKE</span>
+            </div>
+            <div class="cube-face face-4">
+              <span class="cf-num">Tahko 4</span>
+              <span class="cf-icon">🛡️</span>
+              <span class="cf-title">Turvallisuus</span>
+            </div>
+            <div class="cube-face face-5">
+              <span class="cf-num">Tahko 5</span>
+              <span class="cf-icon">📊</span>
+              <span class="cf-title">Talous</span>
+            </div>
+            <div class="cube-face face-6">
+              <span class="cf-num">Tahko 6</span>
+              <span class="cf-icon">📋</span>
+              <span class="cf-title">Seuranta</span>
+            </div>
+          </div>
+        </div>
+        <div class="cube-shadow"></div>
+        <div class="cube-hint">Valitse tahko ylävalikosta tai klikkaa kuutiota</div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         PILARI 1: YHTEINEN TOIMINTAYMPÄRISTÖ JA ROOLIT
+    ════════════════════════════════════════════════════ -->
+    <section class="pillar-view active" id="pillar-1">
+      <div class="section-head">
+        <div class="section-kicker">1. Työnjako, johtaminen ja toimintaedellytykset</div>
+        <h3 class="section-title">Selkeät roolit ja keskinäisen riippuvuuden hallinta</h3>
+        <p class="section-desc">
+          Erikoistyötilojen arki toimii vain, kun kunkin toimijan tehtäväkenttä, toimivalta ja fyysiset reunaehdot tunnistetaan objektiivisesti. 
+          Pajamestarien työpaikka on fyysisesti sidottu tiloihin ja koneisiin, kun taas opetus- ja esihenkilötyö liikkuu laajemmalla kentällä.
+        </p>
+      </div>
+
+      <!-- Roolivalitsin -->
+      <div class="role-matrix-grid">
+        <div class="role-card selected" style="--role-color: var(--i1);" onclick="selectRole('student')">
+          <div class="role-head">
+            <div class="role-avatar" style="background: var(--i1);">OP</div>
+            <div>
+              <div class="role-name">Opiskelija</div>
+              <div class="role-title">Tekijä ja oppija</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: var(--subtext);">Päävastuu omasta oppimisesta, työskentelyn huolellisuudesta ja tilojen siisteydestä.</div>
+        </div>
+
+        <div class="role-card" style="--role-color: #2C6450;" onclick="selectRole('paja')">
+          <div class="role-head">
+            <div class="role-avatar" style="background: #2C6450;">PM</div>
+            <div>
+              <div class="role-name">Pajamestari</div>
+              <div class="role-title">Tilaan sidottu erikoisosaaja</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: var(--subtext);">Vastaa koneiden käyttökunnosta, tilaturvallisuudesta ja teknisestä ohjauksesta rajallisilla resursseilla.</div>
+        </div>
+
+        <div class="role-card" style="--role-color: #8A6A1E;" onclick="selectRole('lehtori')">
+          <div class="role-head">
+            <div class="role-avatar" style="background: #8A6A1E;">LE</div>
+            <div>
+              <div class="role-name">Lehtori</div>
+              <div class="role-title">Pedagoginen kokonaisvastuu</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: var(--subtext);">Vastaa opetussuunnitelman toteutuksesta, arvioinnista ja kurssitarpeiden ennakkotiedottamisesta.</div>
+        </div>
+
+        <div class="role-card" style="--role-color: #8A3D22;" onclick="selectRole('esimies')">
+          <div class="role-head">
+            <div class="role-avatar" style="background: #8A3D22;">EH</div>
+            <div>
+              <div class="role-name">Esihenkilö (Mika Rintala)</div>
+              <div class="role-title">Työnjohto, resurssit & reunaehdot</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: var(--subtext);">Vahvistaa aukiolot, työnjaon, palveluajat ja ratkaisee priorisointi- ja resurssiristiriidat.</div>
+        </div>
+
+        <div class="role-card" style="--role-color: #5B3F70;" onclick="selectRole('koord')">
+          <div class="role-head">
+            <div class="role-avatar" style="background: #5B3F70;">KO</div>
+            <div>
+              <div class="role-name">Koordinaattori</div>
+              <div class="role-title">Hankintaprosessit & hallinto</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: var(--subtext);">Varmistaa materiaalivirtojen sujuvuuden, viralliset KTT-asiakirjat ja laskutuksen seurattavuuden.</div>
+        </div>
+      </div>
+
+      <!-- Dynaaminen Roolikortti -->
+      <div class="role-detail-box" id="roleDetailBox">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         PILARI 2: OIKEUDET JA VELVOLLISUUDET
+    ════════════════════════════════════════════════════ -->
+    <section class="pillar-view" id="pillar-2">
+      <div class="section-head">
+        <div class="section-kicker">2. Toimintaedellytykset ja tasapuolisuus</div>
+        <h3 class="section-title">Yhdenvertaiset käyttöoikeudet ja yhteisvastuullinen tilanhallinta</h3>
+        <p class="section-desc">
+          Työskentely pajatiloissa perustuu yhdenmukaiseen sääntelyyn: käyttöoikeudet pohjautuvat osoitettuun osaamiseen ja perehdytykseen, 
+          ei subjektiivisiin päätöksiin. Vastaavasti tilojen ja laitteiden siisteys sekä välitön vikailmoitusvelvollisuus takaavat toiminnan jatkuvuuden.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="content-card" style="border-top: 3px solid var(--i2);">
+          <span class="card-badge" style="background: color-mix(in srgb, var(--c2) 40%, #FFF); color: var(--i2);">Opiskelijan Toimintaedellytykset</span>
+          <h4 class="card-title">Objektiivinen ja tasapuolinen pääsy</h4>
+          <ul class="card-body" style="padding-left: 18px; margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+            <li><strong>Yhdenvertainen oikeus tilojen käyttöön:</strong> Työskentelyoikeus perustuu vahvistettuun perehdytykseen ja laitepassiin. Kriteerit ovat samat kaikille ryhmille ja tutkinto-ohjelmille.</li>
+            <li><strong>Asiantunteva tekninen ohjaus:</strong> Opiskelijalla on oikeus saada pajahenkilöstöltä asiallista, tasapuolista ja turvallisuusmääräysten mukaista laiteohjausta vahvistettuina palveluaikoina.</li>
+            <li><strong>Läpinäkyvä laite- ja huoltotilanne:</strong> Käyttörajoituksille (esim. huoltokatko tai laiterikko) ilmoitetaan aina perustelu, vastuuhenkilö ja arvioitu kesto.</li>
+            <li><strong>Oman pystyvyyden vahvistaminen:</strong> Selkeät konerungon merkinnät ja ohjeistukset madaltavat itsenäisen tekemisen kynnystä ja siirtävät osaamispääomaa opiskelijalle.</li>
+          </ul>
+        </div>
+
+        <div class="content-card" style="border-top: 3px solid var(--i1);">
+          <span class="card-badge" style="background: color-mix(in srgb, var(--c1) 40%, #FFF); color: var(--i1);">Yhteiset Velvollisuudet</span>
+          <h4 class="card-title">Vastuu laitteistosta ja ympäristöstä</h4>
+          <ul class="card-body" style="padding-left: 18px; margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+            <li><strong>Työpisteen ja koneiden siivous:</strong> Käyttäjä vastaa omien ja tarvittaessa edellisen käyttäjän jättämien jälkien siivoamisesta. Pöly ja jätteet poistetaan heti työstön päätyttyä.</li>
+            <li><strong>Työvälineiden palautuspaikat:</strong> Työkalut palautetaan määrätyille merkityille paikoilleen. Välineiden etsiminen kuluttaa rajallisia pajaohjauksen resursseja.</li>
+            <li><strong>Ilmoitusvelvollisuus poikkeamista:</strong> Laiteviasta, terärikosta tai turvallisuusriskistä ilmoitetaan viipymättä pajamestarille. Ilmoitukset eivät johda sanktioihin, vaan turvaavat laitteiston kunnon.</li>
+            <li><strong>Henkilöstön läsnäolovelvollisuus ja työrauha:</strong> Henkilökunta vastaa tilojen valvonnasta vahvistettuina aikoina, ja opiskelijat kunnioittavat pajan aamuhuolto- ja hallintoaikoja.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Interaktiivinen Pajapäivän Checklist -->
+      <div class="checklist-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <h4 style="font-size: 15px; font-weight: 700;">Pajatyöskentelyn Vakiintunut Toimintatarkistus</h4>
+            <p style="font-size: 12px; color: var(--subtext);">Toimenpiteet ennen työn aloitusta ja sen päättämisen yhteydessä.</p>
+          </div>
+          <span id="checkProgress" style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--i2);">0 / 5 kuitattu</span>
+        </div>
+
+        <div id="checklistItems">
+          <label class="checklist-item" onclick="toggleCheck(this)">
+            <input type="checkbox">
+            <span class="text"><strong>1. Henkilönsuojaimet ja pukeutuminen:</strong> Suojalasit käytössä, hiukset kiinnitettynä, ei irrallisia koruja tai väljiä vaatteita pyörivien koneiden lähellä.</span>
+          </label>
+          <label class="checklist-item" onclick="toggleCheck(this)">
+            <input type="checkbox">
+            <span class="text"><strong>2. RETAKE-uusiomateriaalin kartoitus:</strong> Ennen uuden levy- tai tankomateriaalin ottamista tarkistetaan pajan vakiintuneet uusiolaatikot.</span>
+          </label>
+          <label class="checklist-item" onclick="toggleCheck(this)">
+            <input type="checkbox">
+            <span class="text"><strong>3. Tason 5 kriittisten koneiden mittatarkistus:</strong> Oikohöylässä todennetaan kappaleen minimipituus (300 mm) rungon kiinteästä tarkistusviivasta.</span>
+          </label>
+          <label class="checklist-item" onclick="toggleCheck(this)">
+            <input type="checkbox">
+            <span class="text"><strong>4. Työpisteen puhdistus ja kohdeimurin käyttö:</strong> Lastut ja purut siivotaan harjalla tai imurilla. Työvälineet palautetaan varusteseinälle.</span>
+          </label>
+          <label class="checklist-item" onclick="toggleCheck(this)">
+            <input type="checkbox">
+            <span class="text"><strong>5. Poikkeamien ja huoltotarpeiden kirjaus:</strong> Vioittuneesta terästä tai puuttuvasta materiaalista jätetään merkintä avoimeen lokikirjaan.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         PILARI 3: RETAKE JA KIERTOTALOUS
+    ════════════════════════════════════════════════════ -->
+    <section class="pillar-view" id="pillar-3">
+      <div class="section-head">
+        <div class="section-kicker">3. Resurssitehokkuus ja materiaalikierto</div>
+        <h3 class="section-title">RETAKE-toiminta — Kestävän materiaalitalouden standardi</h3>
+        <p class="section-desc">
+          Kiertotalous pajoilla on konkreettista resurssien riittävyyden turvaamista. 
+          Järjestelmällinen ylijäämäpalan hyödyntäminen vähentää hankintakustannuksia, säästää jätehuollon kuluja ja tukee opiskelijan nopeaa kokeilutoimintaa.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="content-card">
+          <div class="card-badge" style="background: color-mix(in srgb, var(--c3) 40%, #FFF); color: var(--i3);">01 · Kolmitasoinen Lajittelu</div>
+          <h4 class="card-title">Materiaalivirtojen hallinta</h4>
+          <p class="card-body">
+            <strong>Taso 1:</strong> Työpistekohtainen keruu (välitön lajittelu työvaiheessa).<br>
+            <strong>Taso 2:</strong> Paja-alueiden standardoidut koontiastiat (puu, metalli, muovit, keramiikka).<br>
+            <strong>Taso 3:</strong> Kampuksen jätekeskus ja HSY-puristimet.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <div class="card-badge" style="background: color-mix(in srgb, var(--c3) 40%, #FFF); color: var(--i3);">02 · Mittaluokiteltu Porrashylly</div>
+          <h4 class="card-title">Standardisoitu jämäpalahallinta</h4>
+          <p class="card-body">
+            Laser- ja levytyöstön yhteydessä ylijäämäpalat sijoitetaan pystysuoraan kokoluokittain (Porras 4 = &gt;300 mm ... Porras 1 = &lt;100 mm). 
+            Järjestys tekee materiaalin saatavuuden näkyväksi ilman levyvaraston tarpeetonta purkamista.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <div class="card-badge" style="background: color-mix(in srgb, var(--c3) 40%, #FFF); color: var(--i3);">03 · Sisäinen Kierrätys</div>
+          <h4 class="card-title">Materiaalin elvytys tilassa</h4>
+          <p class="card-body">
+            Keramiikkasavi käsitellään, kostutetaan ja vaivataan uudelleen työstökuntoon suoraan pajatilassa. 
+            Kipsille ja erikoiskemikaaleille on omat suljetut kierrätysastiansa sekaantumisen estämiseksi.
+          </p>
+        </div>
+      </div>
+
+      <!-- RETAKE Säästölaskuri -->
+      <div class="retake-calc-box" style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h4 style="font-size: 17px; font-weight: 700; color: var(--i3);">Materiaalihukan ja Päästöjen Vähennyslaskuri</h4>
+            <p style="font-size: 12.5px; color: var(--subtext);">Arvioi uusiomateriaalin käytön tuottama suora euromääräinen ja hiilijalanjäljen säästö.</p>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--i3); font-weight: 700;">RESURSSILASKURI</span>
+        </div>
+
+        <div class="retake-input-row">
+          <div class="input-field">
+            <label>Korvattava raaka-aine</label>
+            <select id="retakeMatSelect" onchange="calculateRetakeSavings()">
+              <option value="koivuvaneri" data-price="28" data-co2="1.2">Koivuvaneri 12 mm (28 €/m²)</option>
+              <option value="alumiini" data-price="65" data-co2="9.5">Alumiinilevy 2 mm (65 €/m²)</option>
+              <option value="pla" data-price="24" data-co2="2.5">PLA-filamentti (24 €/kg)</option>
+              <option value="messinki" data-price="95" data-co2="8.0">Messinkipelti / tanko (95 €/m²)</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label>Uusiokäytetty määrä (m² tai kg)</label>
+            <input type="number" id="retakeAmountInput" value="0.5" step="0.1" min="0.1" oninput="calculateRetakeSavings()">
+          </div>
+        </div>
+
+        <div class="retake-stat-grid">
+          <div class="stat-pill">
+            <div class="val" id="retakeEuroSaved">14.00 €</div>
+            <div class="lbl">Säästetty raaka-ainekustannus</div>
+          </div>
+          <div class="stat-pill">
+            <div class="val" id="retakeCo2Saved">0.60 kg</div>
+            <div class="lbl">Vältetty laskennallinen CO₂-päästö</div>
+          </div>
+          <div class="stat-pill">
+            <div class="val" style="color: #27AE60;">100 %</div>
+            <div class="lbl">Materiaalihukan eliminointi</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         PILARI 4: TYÖTURVALLISUUDEN SYVÄLLINEN YMMÄRTÄMINEN
+    ════════════════════════════════════════════════════ -->
+    <section class="pillar-view" id="pillar-4">
+      <div class="section-head">
+        <div class="section-kicker">4. Työturvallisuusjärjestelmä ja kognitiivinen suoja</div>
+        <h3 class="section-title">Yhteinen turvallisuustaso — ”Meillä tämä hoidetaan näin”</h3>
+        <p class="section-desc">
+          Turvallisuus toimii selkeänä ja luotettavana raamina, jonka sisällä opiskelija uskaltaa kokeilla ja oppia uutta. 
+          Pakollinen perehdytys ja selkeät riskitasot koskevat yhdenmukaisesti koko organisaatiota opiskelijoista lehtoreihin ja johtoon.
+        </p>
+      </div>
+
+      <!-- Turvallisuuden Sipulimalli -->
+      <div class="onion-wrap">
+        <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Työturvallisuuden Kerrosmalli (Sipulin Rakenne)</h4>
+        <p style="font-size: 12px; color: var(--subtext); margin-bottom: 20px; text-align: center;">
+          Valitse kerros tarkastellaksesi, miten perustan turvallisuus mahdollistaa vaativan ammatillisen työskentelyn.
+        </p>
+
+        <div class="onion-layer layer-outer" onclick="showOnionInfo('outer')">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--i4);">ULKOKERROS: Ammatillinen Valmistus & Portfolio</div>
+            <div style="font-size: 12px; color: var(--subtext);">Opinnäytetyöt, näytteilleasettaminen ja kaupallinen laatu</div>
+            
+            <div class="onion-layer layer-mid" style="margin: 14px auto 0;" onclick="event.stopPropagation(); showOnionInfo('mid')">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--i1);">VÄLIKERROS: Tekninen Iterointi & Muotokokeilu</div>
+                <div style="font-size: 12px; color: var(--subtext);">Uusien valmistusmenetelmien, liitosten ja materiaalien tutkiminen</div>
+
+                <div class="onion-layer layer-core" style="margin: 12px auto 0;" onclick="event.stopPropagation(); showOnionInfo('core')">
+                  <div>
+                    <div style="font-size: 11px; font-weight: 800; color: #C0392B;">YDIN: Työturvallisuuden Perusta</div>
+                    <div style="font-size: 11.5px; color: var(--text);">Perehdytykset, henkilösuojaimet, laiteluvat & konekuri</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="onionDescription" style="margin-top: 18px; font-size: 13px; text-align: center; color: var(--subtext); max-width: 540px; background: var(--cloud); padding: 10px 18px; border-radius: var(--radius-sm);">
+          Valitse jokin kerroksista nähdäksesi sen toiminnallisen merkityksen.
+        </div>
+      </div>
+
+      <!-- Koneriskitasot 1-5 & Oikohöyläsimulaattori -->
+      <div class="machine-sim-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <span style="background: rgba(231, 76, 60, 0.25); color: #FF7675; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; font-family: var(--font-mono);">
+              RISKITASO 5 · KRIITTINEN KONETURVALLISUUS
+            </span>
+            <h4 style="font-size: 18px; font-weight: 700; margin-top: 4px;">Oikohöylän Kiinteä Runkomittatarkistus</h4>
+            <p style="font-size: 12px; color: #BBB;">
+              Inhimillisen virhearvion eliminointi: Tason 5 työstökoneen runkoon merkitään pysyvä 300 mm mittaraja. 
+              Alle 300 mm kappaleen syöttäminen terälle on ehdottomasti kielletty vakavan takapotku- ja tapaturmariskin vuoksi.
+            </p>
+          </div>
+          <button class="btn btn-secondary" style="font-size: 11px; padding: 6px 14px;" onclick="showQrModal()">
+            📱 QR-Opastevideon Esikatselu (0:45)
+          </button>
+        </div>
+
+        <!-- Visuaalinen pöytä ja liukusäädin -->
+        <div style="margin-top: 18px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; font-family: var(--font-mono); margin-bottom: 6px;">
+            <span>Työkappaleen mitta: <strong id="pieceLenDisplay" style="color: #F1C40F;">450 mm</strong></span>
+            <span id="pieceStatusDisplay" style="color: #2ECC71; font-weight: 700;">✓ HYVÄKSYTTY (MIN. 300 MM TÄYTTYY)</span>
+          </div>
+          <input type="range" id="pieceRange" min="140" max="750" value="450" oninput="updatePieceLength(this.value)" style="width: 100%; accent-color: #E74C3C; cursor: pointer;">
+        </div>
+
+        <div class="machine-table-visual">
+          <div class="blade-zone" title="Kutterin pyörivä teräalue"></div>
+          <div class="min-line-300">
+            <span>RAJA</span>
+            <span>300 mm</span>
+          </div>
+          <div id="visualPiece" class="sim-workpiece" style="width: 250px;">
+            <span id="visualPieceText">450 mm</span>
+          </div>
+        </div>
+
+        <div style="font-size: 11px; color: #888; font-style: italic;">
+          *Toimintaohje: Alle 300 mm kappaleita työstettäessä käytetään aina asianmukaista syöttökelkkaa tai vaihtoehtoista valmistustapaa pajamestarin ohjauksessa.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         PILARI 5: TALOUSAJATTELU JA AMMATTIMAISUUS
+    ════════════════════════════════════════════════════ -->
+    <section class="pillar-view" id="pillar-5">
+      <div class="section-head">
+        <div class="section-kicker">5. Ammatillinen kustannusoppi ja materiaalitietous</div>
+        <h3 class="section-title">Valmistuskustannusten rakenne — Tavoitteena osaaminen, ei valvonta</h3>
+        <p class="section-desc">
+          Ammattimainen muotoilutoiminta edellyttää valmistuskustannusten kokonaisvaltaista hallintaa. 
+          Raaka-aineella on toimittaja, hankintahinta, toimitusaika ja työstökohtainen hukkakerroin. Kun nämä tekijät avataan opetuksessa, opiskelija omaksuu työelämävalmiudet luontevasti.
+        </p>
+      </div>
+
+      <div class="calc-grid">
+        <!-- Laskentapohja -->
+        <div class="calc-form-card">
+          <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">Prototyypin Kustannusrakenteen Laskelma</h4>
+
+          <div class="input-field">
+            <label>Projektin / työn nimike</label>
+            <input type="text" id="calcProjName" value="Valaisinprototyyppi 'Halo'" oninput="updateReceipt()">
+          </div>
+
+          <div class="input-field">
+            <label>Päämateriaali ja toimittajakanava</label>
+            <select id="calcMat" onchange="updateReceipt()">
+              <option value="koivuvaneri" data-price="28" data-sup="Koskisen Oy / Starkki">Koivuvaneri 12 mm (28 €/m²) · Koskisen</option>
+              <option value="mdf" data-price="15" data-sup="Puuinfo / K-Rauta">MDF-levy 16 mm (15 €/m²) · K-Rauta</option>
+              <option value="alumiini" data-price="65" data-sup="Alumeco Finland">Alumiinilevy 2 mm (65 €/m²) · Alumeco</option>
+              <option value="pla" data-price="24" data-sup="Prusa Research / 3D-Kauppa">PLA-filamentti (24 €/kg) · Prusa</option>
+              <option value="savi" data-price="1.9" data-sup="Kerasil Oy">Punasavi (1.90 €/kg) · Kerasil</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-field">
+              <label>Materiaalin menekki (m² tai kg)</label>
+              <input type="number" id="calcAmount" value="1.2" step="0.1" min="0.1" oninput="updateReceipt()">
+            </div>
+            <div class="input-field">
+              <label>Laskennallinen leikkuuhukka %</label>
+              <select id="calcWaste" onchange="updateReceipt()">
+                <option value="0.10">10 % (Optimoitu CNC-nestaus)</option>
+                <option value="0.20" selected>20 % (Perinteinen mekaaninen sahaus)</option>
+                <option value="0.35">35 % (Monimuotoiset leikkaukset)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-field">
+              <label>Arvioitu koneaika (h)</label>
+              <input type="number" id="calcMachHours" value="1.5" step="0.5" min="0" oninput="updateReceipt()">
+            </div>
+            <div class="input-field">
+              <label>Koneen kustannustaksa (€/h)</label>
+              <select id="calcMachRate" onchange="updateReceipt()">
+                <option value="18" selected>Laserleikkuri (18 €/h)</option>
+                <option value="35">CNC-jyrsin 3-aks (35 €/h)</option>
+                <option value="6">3D-tulostus (6 €/h)</option>
+                <option value="12">Keramiikkauuni poltto (12 €/h)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-field">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" id="calcUseRetake" onchange="updateReceipt()" style="width: auto;">
+              <span>Hyödynnetään pajan RETAKE-uusiomateriaalia osakomponentteihin (-12 €)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Laskelma / Arvolappu -->
+        <div class="calc-receipt-card">
+          <div style="border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
+            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--i5);">Kustannuserittely</div>
+            <div style="font-size: 18px; font-weight: 800;" id="recProjName">Valaisinprototyyppi 'Halo'</div>
+            <div style="font-size: 11px; color: var(--muted);" id="recSupplier">Toimittaja: Koskisen Oy / Starkki</div>
+          </div>
+
+          <div class="receipt-row">
+            <span>Raaka-ainekustannus:</span>
+            <span id="recMatCost" style="font-family: var(--font-mono); font-weight: 600;">33.60 €</span>
+          </div>
+          <div class="receipt-row">
+            <span>Hukkamateriaalin osuus (<span id="recWastePct">20</span>%):</span>
+            <span id="recWasteCost" style="font-family: var(--font-mono); color: var(--i5);">+6.72 €</span>
+          </div>
+          <div class="receipt-row">
+            <span>Laite- ja tilakustannus:</span>
+            <span id="recMachCost" style="font-family: var(--font-mono); font-weight: 600;">27.00 €</span>
+          </div>
+          <div class="receipt-row" id="recRetakeRow" style="display: none; color: #27AE60;">
+            <span>RETAKE-hyvitys:</span>
+            <span id="recRetakeDiscount" style="font-family: var(--font-mono);">-12.00 €</span>
+          </div>
+
+          <div class="receipt-row total">
+            <span>Valmistuksen omakustannus:</span>
+            <span id="recTotalCost" style="color: var(--i5);">67.32 €</span>
+          </div>
+
+          <div style="margin-top: 18px; padding: 12px; background: var(--cloud); border-radius: var(--radius-sm); font-size: 11.5px; color: var(--subtext);">
+            <strong>Työelämäyhteys ja hinnoittelu:</strong><br>
+            Ammattimaisessa tilaustoiminnassa omakustannushintaan lisätään asiantuntijatyön tuntiveloitus (esim. 45 €/h), yleiskustannusosuus ja ALV (25,5 %). 
+            Arvioitu markkinaperusteinen asiakashinta tälle kokonaisuudelle olisi noin <strong><span id="recClientPrice">180.00</span> €</strong>.
+          </div>
+
+          <button class="btn btn-secondary" style="width: 100%; margin-top: 14px;" onclick="showToast('Kustannuserittely kopioitu projektidokumentaatiota varten!')">
+            📋 Kopioi erittely dokumentaatioon
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         PILARI 6: LOKI JA PROJEKTISEURANTA
+    ════════════════════════════════════════════════════ -->
+    <section class="pillar-view" id="pillar-6">
+      <div class="section-head">
+        <div class="section-kicker">6. Laadunkehitys, vikahallinta ja seuranta</div>
+        <h3 class="section-title">Dokumentoitu herätejärjestelmä toiminnan jatkuvuuden tukena</h3>
+        <p class="section-desc">
+          Kirjallinen ja avoin rekisteri tekee toiminnasta mitattavaa ja ennakoitavaa. 
+          Toistuva vikamerkintä tunnistetaan laatupoikkeamaksi, jolloin korjaustoimet kohdistetaan datan ja teknisten faktojen pohjalta. 
+          Läpinäkyvä seuranta antaa esihenkilölle ja johdolle todennetun perustan budjetointiin ja resurssisuunnitteluun.
+        </p>
+      </div>
+
+      <div class="log-dashboard">
+        <!-- Aktiivinen herätelista -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h4 style="font-size: 15px; font-weight: 700;">Aktiivinen Poikkeama- ja Huoltorekisteri</h4>
+            <span style="font-size: 11px; color: var(--muted);">Reaaliaikainen seuranta</span>
+          </div>
+
+          <div class="log-table-wrap">
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th>Kohde</th>
+                  <th>Havainto / Toimenpidetarve</th>
+                  <th>Vastuuhenkilö</th>
+                  <th>Tila</th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody">
+                <tr>
+                  <td><strong>Tarkistussirkkeli</strong></td>
+                  <td>Halkaisukiilan linjauksen säätö ja teräsuojuksen tarkistus</td>
+                  <td>Pajamestari</td>
+                  <td><span class="card-badge" style="background: #FADBD8; color: #922B21; margin:0;">Työn alla</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Laserleikkuri #2</strong></td>
+                  <td>Optiikan puhdistus ja kohdepoiston suodattimen vaihto</td>
+                  <td>Pajamestari</td>
+                  <td><span class="card-badge" style="background: #D4EFDF; color: #1E8449; margin:0;">Kuitattu ✓</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Koivuvaneri 12 mm</strong></td>
+                  <td>Täydennystilaus vakiotoimittajalta kurssitarpeisiin (KX00GJ28)</td>
+                  <td>Koordinaattori</td>
+                  <td><span class="card-badge" style="background: #FCF3CF; color: #B7950B; margin:0;">Tilattu</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3D-Tulostuskeskus</strong></td>
+                  <td>Suuttimen vaihto 0.6 mm ja kalibrointi tehty</td>
+                  <td>Opiskelija / Mestari</td>
+                  <td><span class="card-badge" style="background: #D4EFDF; color: #1E8449; margin:0;">Kuitattu ✓</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Uuden herätteen kirjaus -->
+        <div class="content-card">
+          <h4 class="card-title">Kirjaa poikkeama, huoltotarve tai huomio</h4>
+          <p class="card-body" style="margin-bottom: 14px;">
+            Havaintosi tylsästä terästä, suodattimen tukkeutumisesta tai kalibrointitarpeesta auttaa pitämään laitteet toimintakunnossa.
+          </p>
+
+          <form id="newIssueForm" onsubmit="submitNewIssue(event)">
+            <div class="input-field">
+              <label>Kohde (Laite, työtila tai materiaali)</label>
+              <input type="text" id="issueTarget" placeholder="esim. Vannesaha, Ruiskumaalaamo, Hartsikaappi" required>
+            </div>
+            <div class="input-field">
+              <label>Havainto ja tekninen kuvaus</label>
+              <textarea id="issueDesc" rows="3" placeholder="Kuvaa poikkeama, häiriö tai tehty kalibrointi asiallisesti ja tarkasti." required></textarea>
+            </div>
+            <div class="input-field">
+              <label>Ilmoittajan rooli</label>
+              <select id="issueRole">
+                <option value="Opiskelija">Opiskelija</option>
+                <option value="Lehtori">Lehtori</option>
+                <option value="Pajamestari">Pajamestari</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              ＋ Tallenna merkintä rekisteriin
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ALATUNNISTE -->
+  <footer class="app-footer">
+    <div style="max-width: 800px; margin: 0 auto; line-height: 1.6;">
+      <strong>Metlabora Pajakuutio</strong> · Metropolia Ammattikorkeakoulu · Muotoilun pajat, Arabia-kampus<br>
+      Laadittu lehtorikollegion, pajamestareiden ja esihenkilön yhteisenä toimintamallina opetuksen arjen turvaamiseksi.<br>
+      <span style="font-family: var(--font-sans); font-size: 11px; color: var(--subtext);">
+        Vahvistettavaksi: Esihenkilö Mika Rintala · Toimintaedellytykset ja työturvallisuus
+      </span>
+    </div>
+  </footer>
+
+  <!-- TOAST-VIESTI -->
+  <div id="toast">Merkintä tallennettu!</div>
+
+  <!-- SCRIPT -->
+  <script>
+    // ══════════════════════════════════════════════════════════
+    // ROOLIDATA (PILARI 1) - ASIALLINEN & PSYKOLOGISESTI ÄLYKÄS
+    // ══════════════════════════════════════════════════════════
+    const ROLES_DATA = {
+      student: {
+        title: "Opiskelija — Tekijä ja ammatillinen oppija",
+        color: "var(--i1)",
+        tag: "Oppimisen osapuoli",
+        gives: "Vastaa omasta työskentelystään, sääntöjen noudattamisesta, oman työpisteensä siivouksesta sekä ilmoittaa havaitsemistaan laitevioista viipymättä.",
+        receives: "Saa turvallisen ja toimintakuntoisen oppimisympäristön, laadukkaan teknisen ohjauksen ja työelämässä tarvittavan ammattitaidon.",
+        promise: "”Työskentelen vastuullisesti, noudatan turvamääräyksiä ja ymmärrän, että huolenpito laitteista ja siisteydestä mahdollistaa myös muiden opiskelun.”"
+      },
+      paja: {
+        title: "Pajamestari — Erikoistyötilojen kivijalka ja tekninen asiantuntija",
+        color: "#2C6450",
+        tag: "Staattinen tilavastuu",
+        gives: "Vastaa erikoistyötilojen käyttöturvallisuudesta, laitteiden huolloista ja niiden kirjallisesta dokumentoinnista, koneopasteista sekä opiskelijoiden teknisestä opastuksesta rajallisten resurssien puitteissa.",
+        receives: "Saa lehtoreilta kurssitarpeet ennakkoon sovitussa määräajassa, selkeät kirjalliset työnkuvat, esihenkilön tuen priorisointiin sekä työrauhan määräaikaishuolloille.",
+        promise: "”Toimin paja-alueen asiantuntijana. Kirjalliset vastuut ja sovitut palveluajat poistavat työstäni epämääräisyyttä ja takaavat, että tilat pysyvät turvallisina.”"
+      },
+      lehtori: {
+        title: "Lehtori — Pedagogisen kokonaisuuden ja opetussuunnitelman vastaava",
+        color: "#8A6A1E",
+        tag: "Pedagoginen vastuu",
+        gives: "Kantaa kokonaisvastuun opetussuunnitelman toteutuksesta, tehtävänannoista ja arvioinnista. Ilmoittaa tulevien kurssien tila-, laite-, materiaali- ja suojainresurssitarpeet ennakkoon yhteisellä alustalla.",
+        receives: "Saa toimivan ja turvallisen laiteinfrastruktuurin, teknisen asiantuntijatuen ja varmuuden siitä, että opiskelijat voivat toteuttaa harjoitustyönsä laadukkaasti.",
+        promise: "”Ennakoin kurssitarpeet ajoissa yhteistyössä pajamestarien kanssa enkä tee omavaltaisia muutoksia pajan sääntöihin tai koneohjeisiin.”"
+      },
+      esimies: {
+        title: "Esihenkilö (Mika Rintala) — Työnjohdon, resurssien ja pelisääntöjen vahvistaja",
+        color: "#8A3D22",
+        tag: "Johtamisvastuu",
+        gives: "Tukee tiimiä kokonaisuutena, huolehtii työnjohdosta, työaikajärjestelyiden ja sijaistoiminnan toimivuudesta, vahvistaa palveluajat ja ratkaisee resurssiristiriidat.",
+        receives: "Saa tiimiltä läpinäkyvän ja todennetun tilannekuvan laitteiden kunnosta, materiaalikuluista ja huoltotarpeista budjetoinnin pohjaksi.",
+        promise: "”Vahvistan selkeät raamit ja työnjaon. Huolehdin siitä, että vastuut eivät kasaannu kohtuuttomasti yksittäisten työntekijöiden harteille.”"
+      },
+      koord: {
+        title: "Koordinaattori — Hankintaprosessien ja hallinnon tuki",
+        color: "#5B3F70",
+        tag: "Prosessien tuki",
+        gives: "Hallinnoi tukkuhankintoja, varastokirjanpitoa, käyttöturvatiedotteiden (KTT) ajantasaisuutta ja laskutusprosessien sujuvuutta.",
+        receives: "Saa ennakkotiedot materiaalikuluista lehtoreilta ja materiaalitarpeista pajamestareilta.",
+        promise: "”Varmistan että hankinnat etenevät järjestelmällisesti ja että materiaalivirrat tukevat opetuksen arjen jatkuvuutta.”"
+      }
+    };
+
+    function selectRole(key) {
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      renderRoleDetail(key);
+    }
+
+    function renderRoleDetail(key) {
+      const data = ROLES_DATA[key];
+      const box = document.getElementById('roleDetailBox');
+      box.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+          <div>
+            <span class="card-badge" style="background: color-mix(in srgb, ${data.color} 20%, #FFF); color: ${data.color};">
+              ${data.tag}
+            </span>
+            <h4 style="font-size: 19px; font-weight: 700; color: ${data.color}; margin-top: 4px;">${data.title}</h4>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 14px;">
+          <div style="background: var(--cloud); padding: 14px; border-radius: var(--radius-sm);">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--subtext); margin-bottom: 4px;">Vastuut ja tehtävät työyhteisössä:</div>
+            <div style="font-size: 13.5px; color: var(--text);">${data.gives}</div>
+          </div>
+          <div style="background: var(--cloud); padding: 14px; border-radius: var(--radius-sm);">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--subtext); margin-bottom: 4px;">Toimintaedellytykset muilta toimijoilta:</div>
+            <div style="font-size: 13.5px; color: var(--text);">${data.receives}</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; padding: 12px 16px; border-left: 3px solid ${data.color}; background: #FFF; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-family: var(--font-sans); font-size: 13.5px; color: var(--subtext);">
+          <strong>Roolikohtainen sitoumus:</strong> ${data.promise}
+        </div>
+      `;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // NAVIGOINTI PILARIEN VÄLILLÄ - ASIALLISET METATIEDOT
+    // ══════════════════════════════════════════════════════════
+    const PILLAR_METADATA = {
+      1: { 
+        c: 'var(--c1)', 
+        i: 'var(--i1)', 
+        kicker: 'Tahko 1 · Yhteinen toimintaympäristö & työnjako', 
+        title: 'Opetuksen arjen pysyvät toimintaedellytykset <em>ja ammatillinen oppimisympäristö</em>', 
+        text: 'Pajatilojen toiminta perustuu ennakoitavuuteen, turvallisuuteen ja asiantuntijalähtöiseen yhteistyöhön. Toimintatapojen selkeyttäminen vähentää epämääräisyyttä ja tuo suojaa arkeen.', 
+        quote: '”Yhteisesti sovitut reunaehdot ja kirjalliset vastuut suojaavat henkilöstöä kuormitukselta ja takaavat opiskelijoille tasavertaiset toimintaedellytykset.”' 
+      },
+      2: { 
+        c: 'var(--c2)', 
+        i: 'var(--i2)', 
+        kicker: 'Tahko 2 · Käyttöoikeudet ja vastuut', 
+        title: 'Yhdenvertaiset käyttöoikeudet <em>ja yhteisvastuullinen tilanhallinta</em>', 
+        text: 'Opiskelijan oikeus käyttää pajoja perustuu osoitettuun perehdytykseen ja sääntöjen noudattamiseen. Velvollisuus siivota työpiste ja ilmoittaa laitevioista turvaa yhteisen infran toimintakunnon.', 
+        quote: '”Pajatila jätetään aina siistiksi ja työstövalmiiksi seuraavaa käyttäjää varten.”' 
+      },
+      3: { 
+        c: 'var(--c3)', 
+        i: 'var(--i3)', 
+        kicker: 'Tahko 3 · RETAKE ja materiaalitalous', 
+        title: 'Kiertotalous ja resurssitehokkuus <em>osana pajatoimintaa</em>', 
+        text: 'RETAKE-toiminta ei ole luopumista, vaan kestävää resurssien riittävyyden turvaamista. Järjestelmällinen jämäpalojen uusiokäyttö alentaa opiskelijan kustannuksia ja säästää yhteisiä hankintamäärärahoja.', 
+        quote: '”Tarkista pajan standardoidut RETAKE-uusiolaatikot ennen uuden materiaalin leikkaamista.”' 
+      },
+      4: { 
+        c: 'var(--c4)', 
+        i: 'var(--i4)', 
+        kicker: 'Tahko 4 · Työturvallisuusjärjestelmä', 
+        title: 'Kokonaisvaltainen turvallisuustaso — <em>”Meillä tämä hoidetaan näin”</em>', 
+        text: 'Turvallisuus luo kognitiivisen suojan ja luotettavan raamin, jonka sisällä jokainen uskaltaa ottaa uusia tekniikoita haltuun. Koneriskitasot ja kiinteät rungon mitat tekevät turvallisuudesta arjen rutiinin.', 
+        quote: '”Turvallisuus toimii selkeänä ammatillisena raamina, joka mahdollistaa itsenäisen oppimisen ja kokeilun.”' 
+      },
+      5: { 
+        c: 'var(--c5)', 
+        i: 'var(--i5)', 
+        kicker: 'Tahko 5 · Ammatillinen kustannusoppi', 
+        title: 'Valmistuskustannusten rakenne <em>ja työelämävalmiudet</em>', 
+        text: 'Raaka-aineella on toimittaja, toimitusaika, hankintahinta ja hukkakerroin. Kun kustannusrakenne tehdään näkyväksi opetuksessa, opiskelija sisäistää ammattilaisen talousajattelun jo opintojen aikana.', 
+        quote: '”Tavoite on oppia materiaalin todellinen arvo ja ammattimainen kustannusrakenne, ei valvoa.”' 
+      },
+      6: { 
+        c: 'var(--c6)', 
+        i: 'var(--i6)', 
+        kicker: 'Tahko 6 · Laadunseuranta ja loki', 
+        title: 'Dokumentoitu herätejärjestelmä <em>ja laadun jatkuva parantaminen</em>', 
+        text: 'Avoin lokikirja muuttaa suulliset toiveet mitattaviksi toimenpiteiksi. Toistuva vikailmoitus paljastaa laatupoikkeaman, joka korjataan teknisen datan pohjalta, ja tieto palvelee suoraan budjettisuunnittelua.', 
+        quote: '”Kirjallinen dokumentaatio poistaa epämääräisyyden ja varmistaa, että sovitut huoltotoimet etenevät.”' 
+      }
+    };
+
+    function switchPillar(index) {
+      document.querySelectorAll('.nav-tab').forEach(t => {
+        t.classList.toggle('active', parseInt(t.dataset.pillar) === index);
+      });
+      document.querySelectorAll('.pillar-view').forEach((p, idx) => {
+        p.classList.toggle('active', (idx + 1) === index);
+      });
+
+      const meta = PILLAR_METADATA[index];
+      document.documentElement.style.setProperty('--active-c', meta.c);
+      document.documentElement.style.setProperty('--active-i', meta.i);
+
+      document.getElementById('heroKicker').textContent = meta.kicker;
+      document.getElementById('heroTitle').innerHTML = meta.title;
+      document.getElementById('heroText').textContent = meta.text;
+      document.getElementById('heroQuote').textContent = meta.quote;
+
+      snapCubeToPillar(index);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // KUUTION PYÖRITYS
+    // ══════════════════════════════════════════════════════════
+    let currentCubePillar = 1;
+    const CUBE_ROTS = {
+      1: [-22, 0],
+      2: [-22, -90],
+      3: [-22, -180],
+      4: [-22, 90],
+      5: [-90, 0],
+      6: [90, 0]
+    };
+
+    function snapCubeToPillar(num) {
+      currentCubePillar = num;
+      const rot = CUBE_ROTS[num] || [-22, 0];
+      const cube = document.getElementById('interactiveCube');
+      cube.style.transform = `rotateX(${rot[0]}deg) rotateY(${rot[1]}deg)`;
+    }
+
+    function rotateCubeNext() {
+      currentCubePillar = (currentCubePillar % 6) + 1;
+      switchPillar(currentCubePillar);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // CHECKLIST (PILARI 2)
+    // ══════════════════════════════════════════════════════════
+    function toggleCheck(labelEl) {
+      const cb = labelEl.querySelector('input[type="checkbox"]');
+      labelEl.classList.toggle('done', cb.checked);
+      updateCheckCount();
+    }
+
+    function updateCheckCount() {
+      const total = document.querySelectorAll('#checklistItems input[type="checkbox"]').length;
+      const checked = document.querySelectorAll('#checklistItems input[type="checkbox"]:checked').length;
+      document.getElementById('checkProgress').textContent = `${checked} / ${total} kuitattu`;
+      if (checked === total) {
+        showToast("Kaikki turvallisuus- ja tilanhallintarutiinit kuitattu!");
+      }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // RETAKE LASKURI (PILARI 3)
+    // ══════════════════════════════════════════════════════════
+    function calculateRetakeSavings() {
+      const select = document.getElementById('retakeMatSelect');
+      const opt = select.options[select.selectedIndex];
+      const price = parseFloat(opt.getAttribute('data-price'));
+      const co2 = parseFloat(opt.getAttribute('data-co2'));
+      const amount = parseFloat(document.getElementById('retakeAmountInput').value) || 0;
+
+      const moneySaved = price * amount;
+      const co2Saved = co2 * amount;
+
+      document.getElementById('retakeEuroSaved').textContent = moneySaved.toFixed(2) + " €";
+      document.getElementById('retakeCo2Saved').textContent = co2Saved.toFixed(2) + " kg";
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // SIPULIMALLI JA MITTASIMULAATTORI (PILARI 4)
+    // ══════════════════════════════════════════════════════════
+    function showOnionInfo(layer) {
+      const desc = document.getElementById('onionDescription');
+      if (layer === 'core') {
+        desc.innerHTML = "<strong>Sipulin ydin (Turvallisuusjärjestelmä):</strong> Pakollinen perehdytys, suojalasit, koneluvat ja hätäpysäytysten hallinta. Tämä muodostaa kognitiivisen ja fyysisen turvan, jonka varassa kaikki muu toiminta tapahtuu.";
+      } else if (layer === 'mid') {
+        desc.innerHTML = "<strong>Välikerros (Tekninen iterointi & menetelmät):</strong> Kun turvallisuusrutiinit ovat vakiintuneet, opiskelija voi itsenäisesti keskittyä liitoksiin, työstöparametreihin, hitsaukseen ja uusien materiaalien kokeiluun.";
+      } else {
+        desc.innerHTML = "<strong>Ulkoisin kerros (Ammatillinen valmistus & laatu):</strong> Vaativat opinnäytetyöt, näyttelyt ja kaupalliset projektit. Nämä onnistuvat laadukkaasti vain, kun sisemmät turvallisuus- ja menetelmäkerrokset toimivat saumattomasti.";
+      }
+    }
+
+    function updatePieceLength(val) {
+      const len = parseInt(val);
+      document.getElementById('pieceLenDisplay').textContent = len + " mm";
+      
+      const piece = document.getElementById('visualPiece');
+      const text = document.getElementById('visualPieceText');
+      const status = document.getElementById('pieceStatusDisplay');
+
+      // Visual width scale
+      const pxWidth = Math.max(80, Math.min(380, (len / 750) * 380));
+      piece.style.width = pxWidth + "px";
+      text.textContent = len + " mm";
+
+      if (len < 300) {
+        piece.style.background = "#C0392B";
+        piece.style.borderColor = "#E74C3C";
+        status.innerHTML = "⚠️ VAARA: ALLE 300 MM! TAKAPOTKURISKI — KONEEN KÄYTTÖ KIELLETTY!";
+        status.style.color = "#E74C3C";
+      } else {
+        piece.style.background = "#8D5B4C";
+        piece.style.borderColor = "#D4A373";
+        status.innerHTML = "✓ HYVÄKSYTTY (MIN. 300 MM TÄYTTYY)";
+        status.style.color = "#2ECC71";
+      }
+    }
+
+    function showQrModal() {
+      alert("📱 [QR-OHEISTUSVIDEON ESIMERKKI]\n\nAihe: Oikohöylän minimimittatarkistus ja turvallinen syöttö\nKesto: 45 sekuntia\n\n1. Tarkista työkappale koneen runkoon merkitystä 300 mm viivasta ennen käynnistystä.\n2. Säädä teräsilta vain kappaleen vaatimalle korkeudelle.\n3. Käytä työntöpalikkaa tai -kapulaa kappaleen loppusyötössä.\n4. Paikanna hätäseis-kytkin ennen koneen käynnistämistä.");
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // TALOUSLASKURI (PILARI 5)
+    // ══════════════════════════════════════════════════════════
+    function updateReceipt() {
+      const projName = document.getElementById('calcProjName').value || 'Nimetön projekti';
+      const matSelect = document.getElementById('calcMat');
+      const opt = matSelect.options[matSelect.selectedIndex];
+      const matUnitPrice = parseFloat(opt.getAttribute('data-price'));
+      const matSup = opt.getAttribute('data-sup');
+
+      const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
+      const wasteRate = parseFloat(document.getElementById('calcWaste').value) || 0;
+      const machHours = parseFloat(document.getElementById('calcMachHours').value) || 0;
+      const machRate = parseFloat(document.getElementById('calcMachRate').value) || 0;
+      const useRetake = document.getElementById('calcUseRetake').checked;
+
+      const matCost = matUnitPrice * amount;
+      const wasteCost = matCost * wasteRate;
+      const machCost = machHours * machRate;
+      const discount = useRetake ? 12.00 : 0.00;
+
+      const totalCost = Math.max(0, matCost + wasteCost + machCost - discount);
+      // Asiakashinta kertoimella (sis. asiantuntijatyö + alv 25,5 %)
+      const clientPrice = (totalCost + (machHours * 45)) * 1.255;
+
+      document.getElementById('recProjName').textContent = projName;
+      document.getElementById('recSupplier').textContent = "Toimittaja: " + matSup;
+      document.getElementById('recMatCost').textContent = matCost.toFixed(2) + " €";
+      document.getElementById('recWastePct').textContent = Math.round(wasteRate * 100);
+      document.getElementById('recWasteCost').textContent = "+" + wasteCost.toFixed(2) + " €";
+      document.getElementById('recMachCost').textContent = machCost.toFixed(2) + " €";
+      
+      const retakeRow = document.getElementById('recRetakeRow');
+      if (useRetake) {
+        retakeRow.style.display = 'flex';
+      } else {
+        retakeRow.style.display = 'none';
+      }
+
+      document.getElementById('recTotalCost').textContent = totalCost.toFixed(2) + " €";
+      document.getElementById('recClientPrice').textContent = clientPrice.toFixed(2);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // LOKIKIRJA (PILARI 6)
+    // ══════════════════════════════════════════════════════════
+    function submitNewIssue(e) {
+      e.preventDefault();
+      const target = document.getElementById('issueTarget').value.trim();
+      const desc = document.getElementById('issueDesc').value.trim();
+      const role = document.getElementById('issueRole').value;
+
+      if (!target || !desc) return;
+
+      const tbody = document.getElementById('logTableBody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${escapeHtml(target)}</strong></td>
+        <td>${escapeHtml(desc)}</td>
+        <td>${escapeHtml(role)}</td>
+        <td><span class="card-badge" style="background: #FCF3CF; color: #B7950B; margin:0;">Kirjattu</span></td>
+      `;
+      tbody.prepend(tr);
+
+      document.getElementById('newIssueForm').reset();
+      showToast("Merkintä tallennettu huoltorekisteriin!");
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3200);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRoleDetail('student');
+      calculateRetakeSavings();
+      updateReceipt();
+      updatePieceLength(450);
+    });
+  </script>
+</body>
+</html>
